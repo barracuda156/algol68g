@@ -225,13 +225,13 @@ else
   AC_C_INLINE()
 
 #
-# Check -Wl,--export-dynamic or -export_dynamic, needed for creating shared objects.
-# If either is supported, add to LDFLAGS
+# Check -Wl,--export-dynamic, -export_dynamic or -dynamic, needed for creating shared objects.
+# If either is supported, add to LDFLAGS.
 #
-# GNU ld and LLVM lld accept --export-dynamic, OS X ld accepts -export_dynamic.
+# GNU ld accepts --export-dynamic, LLVM lld accepts -export_dynamic and OS X ld accepts -dynamic.
 #
 # Test for -export_dynamic on Darwin platforms only.
-# Platforms like OpenBSD interpret this as -e xport_dynamic which is not intended.
+# Platforms like OpenBSD interpret this as -e xport_dynamic, which is not intended.
 #
 # Check whether we can link to a particular function and run.
 #
@@ -255,11 +255,11 @@ else
     ]
   )
 
-# Extra check, targetting (Silicon) Macs.
+# Extra check, targetting Macs.
 
   case "$host" in
 
-    *-*-darwin*)
+    *86-*-darwin* | *86_64-*-darwin* | aarch64-*-darwin*)
 
       a68g_ac_arg="-Wl,-export_dynamic"
       AC_MSG_CHECKING([whether $CC accepts $a68g_ac_arg])
@@ -272,12 +272,32 @@ else
          # On x86 Darwin we need to have Xcode tools installed and libSystem.dylib available for the plugin compiler
          case "$host" in
            *86-*-darwin* | *86_64-*-darwin*)
-             AC_DEFINE(EXPORT_DYNAMIC_FLAGS, "-export_dynamic -undefined dynamic_lookup -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib -lSystem", [Define link loader flags])
+             AC_DEFINE(EXPORT_DYNAMIC_FLAGS, "-export_dynamic -undefined dynamic_lookup -lSystem", [Define link loader flags])
              ;;
            aarch64-*-darwin*)  
              AC_DEFINE(EXPORT_DYNAMIC_FLAGS, "-export_dynamic -undefined dynamic_lookup", [Define link loader flags])
              ;;
          esac
+        ],
+        [AC_MSG_RESULT(no)
+         LDFLAGS=$a68g_ac_save_LDFLAGS
+        ],
+        [AC_MSG_RESULT(assuming no)
+         LDFLAGS=$a68g_ac_save_LDFLAGS
+        ]
+      )
+      ;;
+
+    powerpc*-*-darwin*)
+
+      a68g_ac_arg="-Wl,-dynamic"
+      AC_MSG_CHECKING([whether $CC accepts $a68g_ac_arg])
+      a68g_ac_save_LDFLAGS=$LDFLAGS
+      LDFLAGS="$a68g_ac_save_LDFLAGS $a68g_ac_arg"
+      AC_RUN_IFELSE([AC_LANG_PROGRAM([extern void exit (); void (*fptr) () = exit;],[])],
+        [AC_MSG_RESULT(yes)
+         AC_DEFINE(HAVE_EXPORT_DYNAMIC, 1, [Define this if EXPORT_DYNAMIC is recognised])
+         AC_DEFINE(EXPORT_DYNAMIC_FLAGS, "-dynamic -undefined dynamic_lookup -lSystem", [Define link loader flags])
         ],
         [AC_MSG_RESULT(no)
          LDFLAGS=$a68g_ac_save_LDFLAGS
