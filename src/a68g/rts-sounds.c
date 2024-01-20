@@ -31,14 +31,13 @@
 
 #define MAX_BYTES 4
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-  #define A68_LITTLE_ENDIAN A68_TRUE
-  #define A68_BIG_ENDIAN A68_FALSE
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
+#if (defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)) || \
+  (defined(BYTE_ORDER) && (BYTE_ORDER == BIG_ENDIAN))
   #define A68_LITTLE_ENDIAN A68_FALSE
   #define A68_BIG_ENDIAN A68_TRUE
 #else
-  #error "undefined endianness"
+  #define A68_LITTLE_ENDIAN A68_TRUE
+  #define A68_BIG_ENDIAN A68_FALSE
 #endif
 
 // From public Microsoft RIFF documentation.

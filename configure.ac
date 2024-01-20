@@ -514,7 +514,7 @@ AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIOCGWINSZ
 
-AC_CHECK_HEADERS([assert.h complex.h ctype.h endian.h errno.h execinfo.h fcntl.h fenv.h float.h libgen.h limits.h regex.h setjmp.h signal.h stdarg.h stddef.h stdio.h stdlib.h sys/ioctl.h sys/resource.h sys/time.h termios.h time.h unistd.h])
+AC_CHECK_HEADERS([assert.h complex.h ctype.h endian.h machine/endian.h sys/endian.h errno.h execinfo.h fcntl.h fenv.h float.h libgen.h limits.h regex.h setjmp.h signal.h stdarg.h stddef.h stdio.h stdlib.h sys/ioctl.h sys/resource.h sys/time.h termios.h time.h unistd.h])
 
 #
 # Functions we expect.
