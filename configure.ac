@@ -692,7 +692,7 @@ if test "x$enable_mathlib" = "xyes"; then
     [#define MATHLIB_STANDALONE
      #include <Rmath.h>
     ])
-  AC_CHECK_LIB([Rmath], [ptukey], [], [enable_mathlib=no])
+  AC_CHECK_LIB([R], [ptukey], [], [enable_mathlib=no])
   if test "x$enable_mathlib" = "xyes"; then
     AC_DEFINE(HAVE_MATHLIB, 1, [Define this if a good mathlib installation was detected]) 
   fi
