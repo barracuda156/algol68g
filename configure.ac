@@ -135,7 +135,8 @@ esac
 # Extra options.
 #
 
-AC_ARG_ENABLE(arch, [AS_HELP_STRING([--enable-arch=cpu], [if using gcc, enable emitting architecture-tuned assembly code (default is "no")])], , enable_arch=no) 
+AC_ARG_ENABLE(arch, [AS_HELP_STRING([--enable-arch=cpu], [if using gcc, enable emitting architecture-tuned assembly code (default is "no")])], , enable_arch=no)
+AC_ARG_ENABLE(tune, [AS_HELP_STRING([--enable-tune=cpu], [if using gcc, enable emitting architecture-tuned assembly code (default is "no")])], , enable_tune=no)
 AC_ARG_ENABLE(clang, [AS_HELP_STRING([--enable-clang], [prefer clang over gcc if both are installed (default is "no")])], , enable_clang=no) 
 AC_ARG_ENABLE(compiler, [AS_HELP_STRING([--enable-compiler], [enable plugin compiler (default is "yes")])], , enable_compiler=yes) 
 AC_ARG_ENABLE(core, [AS_HELP_STRING([--enable-core], [build without optional libraries or plugin compiler (default is "no")])], , enable_core=no) 
@@ -326,6 +327,22 @@ if test "x$enable_arch" != "xno"; then
   _AC_COMPILE_IFELSE([AC_LANG_PROGRAM()], 
     [AC_MSG_RESULT(yes)
      AC_DEFINE_UNQUOTED(HAVE_TUNING, "$a68g_ac_march", [Define this if user wants to tune for a specific CPU]) 
+    ], 
+    [AC_MSG_RESULT(no)
+     AC_MSG_WARN([your CPU name is not accepted; resetting to default])
+     CFLAGS="$a68g_ac_save_CFLAGS"
+    ]
+  )
+fi
+
+if test "x$enable_tune" != "xno"; then
+  AC_MSG_CHECKING([whether $CC accepts -mtune=$enable_tune])
+  a68g_ac_save_CFLAGS=$CFLAGS
+  a68g_ac_mtune="-mtune=$enable_tune"
+  CFLAGS="$a68g_ac_save_CFLAGS $a68g_ac_mtune"
+  _AC_COMPILE_IFELSE([AC_LANG_PROGRAM()], 
+    [AC_MSG_RESULT(yes)
+     AC_DEFINE_UNQUOTED(HAVE_TUNING, "$a68g_ac_mtune", [Define this if user wants to tune for a specific CPU]) 
     ], 
     [AC_MSG_RESULT(no)
      AC_MSG_WARN([your CPU name is not accepted; resetting to default])
